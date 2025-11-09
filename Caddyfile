@@ -1,0 +1,36 @@
+# TeamWatcher ICS Feed Caddy Configuration
+# Replace feed.example.com with your actual domain
+
+feed.example.com {
+    # Automatic HTTPS with Let's Encrypt
+    # Caddy will automatically obtain and renew certificates
+
+    # Reverse proxy to local uvicorn server
+    reverse_proxy 127.0.0.1:8000
+
+    # Enable gzip compression
+    encode gzip
+
+    # Security headers
+    header {
+        # Prevent clickjacking
+        X-Frame-Options "SAMEORIGIN"
+        # Prevent MIME type sniffing
+        X-Content-Type-Options "nosniff"
+        # XSS protection
+        X-XSS-Protection "1; mode=block"
+        # Referrer policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # Access logging
+    log {
+        output file /opt/homebrew/var/log/caddy/teamwatcher_access.log
+        format json
+    }
+}
+
+# Optional: redirect www to non-www
+www.feed.example.com {
+    redir https://feed.example.com{uri} permanent
+}
