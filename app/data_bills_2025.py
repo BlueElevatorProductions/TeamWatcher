@@ -4,6 +4,17 @@ import pytz
 TZ_NY = pytz.timezone("America/New_York")
 
 GAMES = [
+    # Past games (Weeks 1-9)
+    ("Week 1", "2025-09-07", "20:20", "Baltimore Ravens", True, "NBC", 1),
+    ("Week 2", "2025-09-14", "13:00", "New York Jets", False, "CBS", 2),
+    ("Week 3", "2025-09-18", "20:15", "Miami Dolphins", True, "Prime Video", 3),
+    ("Week 4", "2025-09-28", "13:00", "New Orleans Saints", True, "CBS", 4),
+    ("Week 5", "2025-10-05", "20:20", "New England Patriots", True, "NBC", 5),
+    ("Week 6", "2025-10-13", "20:15", "Atlanta Falcons", False, "ESPN", 6),
+    # Week 7 was BYE week (no game)
+    ("Week 8", "2025-10-26", "13:00", "Carolina Panthers", False, "CBS", 8),
+    ("Week 9", "2025-11-02", "13:00", "Kansas City Chiefs", True, "CBS", 9),
+    # Future games
     ("Week 10", "2025-11-09", "13:00", "Miami Dolphins", False, "CBS", 10),
     ("Week 11", "2025-11-16", "13:00", "Tampa Bay Buccaneers", True, "CBS", 11),
     ("Week 12", "2025-11-20", "20:15", "Houston Texans", False, "Prime Video", 12),

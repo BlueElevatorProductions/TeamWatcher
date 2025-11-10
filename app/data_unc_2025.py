@@ -6,6 +6,10 @@ TZ_NY = pytz.timezone("America/New_York")
 # Best-known UNC men's basketball schedule (Nov 2025–Jan 2026), times in ET.
 # (date, time, opponent, home, network)
 GAMES = [
+    # Past games
+    ("2025-11-03", "19:00", "Central Arkansas Bears", True, "ACCN"),
+    ("2025-11-07", "19:00", "Kansas Jayhawks", True, "ESPN"),
+    # Future games
     ("2025-11-11", "19:00", "Radford Highlanders", True, "ACCN"),
     ("2025-11-14", "21:00", "North Carolina Central Eagles", True, "ACCN"),
     ("2025-11-18", "19:00", "Navy Midshipmen", True, "ACCN"),
