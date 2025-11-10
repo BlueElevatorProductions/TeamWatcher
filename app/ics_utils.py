@@ -8,12 +8,49 @@ def to_ics_utc(dt_local: datetime) -> str:
     dt_utc = dt_local.astimezone(pytz.utc)
     return dt_utc.strftime("%Y%m%dT%H%M%SZ")
 
+def escape_ics_text(text: str) -> str:
+    """
+    Escape text according to RFC 5545 section 3.3.11.
+
+    TEXT values must escape:
+    - Backslash (\) → \\
+    - Newline (\n) → \n (with backslash)
+    - Carriage return (\r) → \n (with backslash)
+    - Comma (,) → \,
+    - Semicolon (;) → \;
+    """
+    if not text:
+        return text
+
+    # Order matters: backslash first, then others
+    text = text.replace('\\', '\\\\')  # Escape backslashes
+    text = text.replace('\r\n', '\\n')  # Windows line endings
+    text = text.replace('\n', '\\n')    # Unix line endings
+    text = text.replace('\r', '\\n')    # Mac line endings
+    text = text.replace(',', '\\,')     # Escape commas
+    text = text.replace(';', '\\;')     # Escape semicolons
+
+    return text
+
 def fold_ics_line(s: str) -> List[str]:
+    """
+    Fold lines longer than 75 octets according to RFC 5545 section 3.1.
+    Continuation lines start with a space.
+    """
     out = []
-    max_len = 70
-    while len(s) > max_len:
-        out.append(s[:max_len])
-        s = " " + s[max_len:]
+    max_len = 75  # RFC 5545 recommends 75 octets
+    while len(s.encode('utf-8')) > max_len:
+        # Find safe break point (don't break in middle of UTF-8 character)
+        break_at = max_len
+        while break_at > 0:
+            try:
+                s[:break_at].encode('utf-8')
+                break
+            except UnicodeEncodeError:
+                break_at -= 1
+
+        out.append(s[:break_at])
+        s = " " + s[break_at:]  # Continuation line starts with space
     out.append(s)
     return out
 
@@ -48,10 +85,13 @@ def generate_ics(calendar_name: str, calendar_color: str, events: List[Dict]) ->
         lines.append("BEGIN:VEVENT")
         lines.append(f"UID:{uid}")
         lines.append(f"DTSTAMP:{now_utc}")
-        lines.append(f"SUMMARY:{summary}")
+        # Escape summary and description per RFC 5545
+        for folded in fold_ics_line(f"SUMMARY:{escape_ics_text(summary)}"):
+            lines.append(folded)
         lines.append(f"DTSTART:{to_ics_utc(dt_local)}")
         lines.append(f"DTEND:{to_ics_utc(dt_end_local)}")
-        for folded in fold_ics_line(f"DESCRIPTION:{description}"):
+        # Escape description before folding
+        for folded in fold_ics_line(f"DESCRIPTION:{escape_ics_text(description)}"):
             lines.append(folded)
         lines.append("BEGIN:VALARM")
         lines.append("TRIGGER:-PT60M")
