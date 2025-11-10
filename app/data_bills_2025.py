@@ -33,6 +33,7 @@ def events(zip_code: str):
         uid = f"bills-2025-{label.lower().replace(' ','')}-{date_str}@teamwatcher.local"
         evs.append({
             "start_dt": dt_local, "end_dt": end_dt, "summary": summary,
-            "description": desc, "uid": uid, "network": network
+            "description": desc, "uid": uid, "network": network,
+            "opponent": opp, "home": home, "week": wk_506
         })
     return evs
